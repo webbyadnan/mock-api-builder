@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+/* ─── Design System Tokens ─────────────────────────────────── */
+
+:root {
+  --color-bg: #F7F4EF;
+  --color-bg-card: #FFFFFF;
+  --color-text: #1A1A1A;
+  --color-text-muted: #9C9789;
+  --color-accent: #F59E0B;
+  --color-border: #E5E1D8;
+  --color-border-hover: #D5D0C6;
+}
+
+/* ─── Base Styles ──────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Grid Dot Background ──────────────────────────────────── */
+
+.grid-dot-bg {
+  background-image: radial-gradient(circle, #D5D0C6 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ─── Custom Scrollbar ─────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* ─── Animations ───────────────────────────────────────────── */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulseOnce {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes flipCopy {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(90deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-pulse-once {
+  animation: pulseOnce 0.6s ease-in-out;
+}
+
+.animate-flip-copy {
+  animation: flipCopy 0.5s ease-in-out;
+}
+
+/* ─── Stagger Delay Utilities ──────────────────────────────── */
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.30s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.40s; }
+
+/* ─── Focus Ring ───────────────────────────────────────────── */
+
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+}
+
+/* ─── Code Block Styling ───────────────────────────────────── */
+
+.code-block {
+  background: #1A1A1A;
+  color: #E5E1D8;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.code-block .code-keyword {
+  color: #F59E0B;
+}
+
+.code-block .code-string {
+  color: #34D399;
+}
+
+.code-block .code-comment {
+  color: #6B7280;
+}
+
+.code-block .code-url {
+  color: #60A5FA;
+}
