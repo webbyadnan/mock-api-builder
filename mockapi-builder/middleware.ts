@@ -1,7 +1,7 @@
-import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default auth((req) => {
+export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Public routes — no auth required
@@ -16,14 +16,21 @@ export default auth((req) => {
   }
 
   // Protected routes — require auth
-  if (!req.auth) {
+  // We check for the session cookie directly to avoid loading Prisma/bcrypt in Edge Runtime
+  const isAuthenticated = 
+    req.cookies.has("authjs.session-token") || 
+    req.cookies.has("__Secure-authjs.session-token") ||
+    req.cookies.has("next-auth.session-token") ||
+    req.cookies.has("__Secure-next-auth.session-token");
+
+  if (!isAuthenticated) {
     const loginUrl = new URL("/login", req.nextUrl.origin);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [
