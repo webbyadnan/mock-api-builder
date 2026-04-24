@@ -95,7 +95,7 @@ export async function POST(
 
     // Notify other members
     const allUserIds = [project.userId, ...project.members.map(m => m.userId)];
-    const notifyUserIds = allUserIds.filter(id => id !== session.user.id);
+    const notifyUserIds = allUserIds.filter(id => id !== session.user!.id);
 
     if (notifyUserIds.length > 0) {
       await prisma.notification.createMany({
