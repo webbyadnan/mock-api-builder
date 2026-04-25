@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Route, Activity, Users, MessageCircle } from "lucide-react";
+import { Route, Activity, Users, MessageCircle, TrendingUp } from "lucide-react";
 
 export function ProjectTabs({ projectId }: { projectId: string }) {
   const pathname = usePathname();
@@ -10,6 +10,7 @@ export function ProjectTabs({ projectId }: { projectId: string }) {
   const tabs = [
     { name: "Endpoints", href: `/dashboard/projects/${projectId}`, icon: Route },
     { name: "Logs", href: `/dashboard/projects/${projectId}/logs`, icon: Activity },
+    { name: "Analytics", href: `/dashboard/projects/${projectId}/analytics`, icon: TrendingUp },
     { name: "Chat", href: `/dashboard/projects/${projectId}/chat`, icon: MessageCircle },
     { name: "Team", href: `/dashboard/projects/${projectId}/settings`, icon: Users },
   ];

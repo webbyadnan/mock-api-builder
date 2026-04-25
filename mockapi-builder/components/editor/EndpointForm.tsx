@@ -49,6 +49,9 @@ export function EndpointForm({
       ? endpoint.body
       : JSON.stringify(endpoint.body, null, 2),
   );
+  const [customHeaders, setCustomHeaders] = useState<{ key: string; value: string }[]>(
+    Object.entries(endpoint.headers).map(([key, value]) => ({ key, value }))
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [jsonError, setJsonError] = useState("");
@@ -75,13 +78,22 @@ export function EndpointForm({
       path: endpoint.path,
       statusCode: endpoint.statusCode,
       delay: endpoint.delay,
+      headers: endpoint.headers,
       body: typeof endpoint.body === "string"
         ? endpoint.body
         : JSON.stringify(endpoint.body, null, 2),
     });
-    const current = JSON.stringify({ method, path, statusCode, delay, body });
+    
+    const formattedHeaders = customHeaders.reduce((acc, { key, value }) => {
+      if (key.trim() && value.trim()) {
+        acc[key.trim()] = value.trim();
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    const current = JSON.stringify({ method, path, statusCode, delay, headers: formattedHeaders, body });
     setHasUnsavedChanges(original !== current);
-  }, [method, path, statusCode, delay, body, endpoint]);
+  }, [method, path, statusCode, delay, customHeaders, body, endpoint]);
 
   // Validate JSON on body change
   useEffect(() => {
@@ -100,6 +112,13 @@ export function EndpointForm({
 
     setIsSaving(true);
 
+    const formattedHeaders = customHeaders.reduce((acc, { key, value }) => {
+      if (key.trim() && value.trim()) {
+        acc[key.trim()] = value.trim();
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
     try {
       const res = await fetch(
         `/api/projects/${projectId}/endpoints/${endpoint.id}`,
@@ -111,6 +130,7 @@ export function EndpointForm({
             path,
             statusCode,
             delay,
+            headers: formattedHeaders,
             body: body.trim() ? JSON.parse(body) : {},
           }),
         },
@@ -249,6 +269,62 @@ export function EndpointForm({
             onChange={(e) => setDelay(Number(e.target.value))}
             helperText="0-10000ms. Simulates network latency."
           />
+        </div>
+      </div>
+
+      {/* Custom Headers */}
+      <div className="rounded-lg border border-[#E5E1D8] bg-white p-4">
+        <h3 className="mb-3 font-[family-name:var(--font-mono)] text-sm font-semibold text-[#1A1A1A]">
+          Response Headers
+        </h3>
+        <div className="space-y-2">
+          {customHeaders.map((header, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <div className="flex-1">
+                <Input
+                  placeholder="e.g. Cache-Control"
+                  value={header.key}
+                  onChange={(e) => {
+                    const newHeaders = [...customHeaders];
+                    newHeaders[index].key = e.target.value;
+                    setCustomHeaders(newHeaders);
+                  }}
+                />
+              </div>
+              <div className="flex-1">
+                <Input
+                  placeholder="e.g. no-cache"
+                  value={header.value}
+                  onChange={(e) => {
+                    const newHeaders = [...customHeaders];
+                    newHeaders[index].value = e.target.value;
+                    setCustomHeaders(newHeaders);
+                  }}
+                />
+              </div>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  const newHeaders = [...customHeaders];
+                  newHeaders.splice(index, 1);
+                  setCustomHeaders(newHeaders);
+                }}
+                className="mt-6 px-2 text-red-500 hover:bg-red-50 hover:text-red-600"
+                title="Remove Header"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            variant="secondary"
+            size="sm"
+            type="button"
+            onClick={() => setCustomHeaders([...customHeaders, { key: "", value: "" }])}
+            className="mt-2 text-xs"
+          >
+            + Add Header
+          </Button>
         </div>
       </div>
 
