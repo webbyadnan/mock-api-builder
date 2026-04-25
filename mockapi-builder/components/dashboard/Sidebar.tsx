@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { Zap, LayoutDashboard, LogOut, X, Menu, Users } from "lucide-react";
+import { Zap, LayoutDashboard, LogOut, X, Menu, Users, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { NotificationBell } from "./NotificationBell";
@@ -11,6 +11,7 @@ import { NotificationBell } from "./NotificationBell";
 const navLinks = [
   { href: "/dashboard", label: "My Projects", icon: LayoutDashboard },
   { href: "/dashboard", label: "Team Projects", icon: Users, hash: "team" },
+  { href: "/dashboard/profile", label: "Profile", icon: User },
 ];
 
 export function Sidebar() {
