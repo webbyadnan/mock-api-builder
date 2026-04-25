@@ -83,20 +83,22 @@ model Project {
 }
 
 model Endpoint {
-  id         String   @id @default(cuid())
-  method     String
-  path       String
-  statusCode Int      @default(200)
-  headers    Json     @default("{}")
-  body       Json
-  delay      Int      @default(0)
-  isActive   Boolean  @default(true)
-  projectId  String
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  logs       RequestLog[]
-  chatMessages ChatMessage[]
+  id             String   @id @default(cuid())
+  method         String
+  path           String
+  statusCode     Int      @default(200)
+  headers        Json     @default("{}")
+  body           Json
+  delay          Int      @default(0)
+  isActive       Boolean  @default(true)
+  apiKeyRequired Boolean  @default(false)
+  apiKeyHash     String?
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  logs           RequestLog[]
+  chatMessages   ChatMessage[]
 
   @@index([projectId])
   @@unique([projectId, method, path])

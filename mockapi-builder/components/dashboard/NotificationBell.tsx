@@ -64,11 +64,9 @@ export function NotificationBell() {
     }
   };
 
-  // Poll every 5 seconds
+  // Fetch once on mount
   useEffect(() => {
     fetchNotifications(true);
-    const interval = setInterval(() => fetchNotifications(false), 5000);
-    return () => clearInterval(interval);
   }, []);
 
   // Close on outside click

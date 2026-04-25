@@ -61,9 +61,11 @@ export default async function EndpointEditorPage({
         endpoint={{
           ...endpoint,
           headers: endpoint.headers as Record<string, string>,
+          apiKeyRequired: endpoint.apiKeyRequired,
         }}
         projectId={projectId}
         projectSlug={project.slug}
+        isOwner={project.userId === session.user.id}
       />
     </div>
   );

@@ -1,30 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
-const lines = [
-  { prefix: "$", text: 'curl https://mockapi.dev/api/mock/shop/products', delay: 0 },
-  { prefix: "", text: "", delay: 600 },
-  { prefix: "//", text: " Response in 23ms", delay: 900 },
-  { prefix: "{", text: "", delay: 1100 },
-  { prefix: " ", text: ' "id": 1,', delay: 1250 },
-  { prefix: " ", text: ' "name": "MacBook Pro 16\\"",', delay: 1400 },
-  { prefix: " ", text: ' "price": 2499.99,', delay: 1550 },
-  { prefix: " ", text: ' "inStock": true', delay: 1700 },
-  { prefix: "}", text: "", delay: 1850 },
-];
+import { LiveDemo } from "@/components/landing/LiveDemo";
 
 export function Hero() {
-  const [visibleLines, setVisibleLines] = useState(0);
-
-  useEffect(() => {
-    const timers = lines.map((line, i) =>
-      setTimeout(() => setVisibleLines(i + 1), line.delay),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, []);
-
   return (
     <section className="relative px-6 pt-24 pb-20 md:pt-36 md:pb-32">
       {/* Background noise texture */}
@@ -45,7 +24,7 @@ export function Hero() {
             <div className="mb-6 inline-flex items-center gap-2 rounded border border-[#2A2A2A] bg-[#161616] px-3 py-1">
               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
               <span className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-widest text-[#666]">
-                v1.0 — public beta
+                v1.1 — now live
               </span>
             </div>
 
@@ -56,7 +35,7 @@ export function Hero() {
             </h1>
 
             <p className="mt-5 max-w-md text-base leading-relaxed text-[#888]">
-              Spin up mock REST endpoints in 30 seconds. Get a live URL. 
+              Spin up mock REST endpoints in 30 seconds. Get a live URL.
               Plug it into your frontend and keep shipping.
             </p>
 
@@ -109,62 +88,15 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right: Terminal */}
+          {/* Right: Live Demo Widget */}
           <div className="relative">
-            {/* Terminal glow */}
+            {/* Glow */}
             <div className="absolute -inset-2 rounded-xl bg-[#F59E0B]/[0.03] blur-xl" />
-
-            <div className="relative overflow-hidden rounded-xl border border-[#2A2A2A] bg-[#0A0A0A]">
-              {/* Terminal header */}
-              <div className="flex items-center gap-2 border-b border-[#1E1E1E] px-4 py-2.5">
-                <div className="flex gap-1.5">
-                  <div className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
-                  <div className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
-                  <div className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
-                </div>
-                <span className="ml-2 font-[family-name:var(--font-mono)] text-[10px] text-[#444]">
-                  terminal — mockapi
-                </span>
-              </div>
-
-              {/* Terminal body */}
-              <div className="p-5 font-[family-name:var(--font-mono)] text-[13px] leading-6">
-                {lines.slice(0, visibleLines).map((line, i) => (
-                  <div key={i} className="flex">
-                    {line.prefix === "$" && (
-                      <>
-                        <span className="mr-2 text-[#F59E0B]">$</span>
-                        <span className="text-[#E5E1D8]">{line.text}</span>
-                      </>
-                    )}
-                    {line.prefix === "//" && (
-                      <span className="text-[#444]">{line.prefix}{line.text}</span>
-                    )}
-                    {line.prefix === "{" && (
-                      <span className="text-[#E5E1D8]">{"{"}</span>
-                    )}
-                    {line.prefix === "}" && (
-                      <span className="text-[#E5E1D8]">{"}"}</span>
-                    )}
-                    {line.prefix === " " && (
-                      <span>
-                        {"  "}
-                        <span className="text-[#F59E0B]">
-                          {line.text.split(":")[0]}
-                        </span>
-                        <span className="text-[#E5E1D8]">:</span>
-                        <span className="text-[#34D399]">
-                          {line.text.split(":").slice(1).join(":")}
-                        </span>
-                      </span>
-                    )}
-                    {line.prefix === "" && <span>&nbsp;</span>}
-                  </div>
-                ))}
-                {visibleLines < lines.length && (
-                  <span className="inline-block h-4 w-1.5 animate-pulse bg-[#F59E0B]" />
-                )}
-              </div>
+            <div className="relative">
+              <LiveDemo />
+              <p className="mt-2 text-center font-[family-name:var(--font-mono)] text-[10px] text-[#333]">
+                ↑ real API — try it yourself
+              </p>
             </div>
           </div>
         </div>
@@ -172,3 +104,4 @@ export function Hero() {
     </section>
   );
 }
+

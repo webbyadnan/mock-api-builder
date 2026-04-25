@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { faker } from "@faker-js/faker";
+import bcrypt from "bcryptjs";
 
 interface RouteParams {
   params: Promise<{ projectId: string; path: string[] }>;
@@ -158,6 +159,26 @@ async function handleMockRequest(
         },
         { status: 503, headers: corsHeaders() },
       );
+    }
+
+    // Check API key protection
+    if (matchedEndpoint.apiKeyRequired && matchedEndpoint.apiKeyHash) {
+      const provided =
+        req.headers.get("x-api-key") ||
+        new URL(req.url).searchParams.get("api_key");
+
+      const isValid =
+        provided ? await bcrypt.compare(provided, matchedEndpoint.apiKeyHash) : false;
+
+      if (!isValid) {
+        return NextResponse.json(
+          {
+            error: "Unauthorized",
+            message: "This endpoint requires a valid API key. Pass it via the X-API-Key header or ?api_key= query param.",
+          },
+          { status: 401, headers: corsHeaders() },
+        );
+      }
     }
 
     // Apply delay if configured

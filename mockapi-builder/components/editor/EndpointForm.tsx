@@ -2,16 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Trash2, Wand2 } from "lucide-react";
+import { Save, Trash2, Wand2, Layers } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { useToast } from "@/components/ui/Toast";
 import { JsonEditor } from "@/components/editor/JsonEditor";
 import { EndpointTester } from "@/components/editor/EndpointTester";
+import { TemplatesModal } from "@/components/editor/TemplatesModal";
+import { ApiKeyPanel } from "@/components/editor/ApiKeyPanel";
+import { RecentHitsPanel } from "@/components/editor/RecentHitsPanel";
 import { Modal } from "@/components/ui/Modal";
 import { isValidJson, formatJson } from "@/lib/utils";
 import { HTTP_METHODS, STATUS_CODES } from "@/types";
+import type { ResponseTemplate } from "@/lib/templates";
 
 interface EndpointFormProps {
   endpoint: {
@@ -21,17 +25,20 @@ interface EndpointFormProps {
     statusCode: number;
     delay: number;
     isActive: boolean;
+    apiKeyRequired: boolean;
     headers: Record<string, string>;
     body: unknown;
   };
   projectId: string;
   projectSlug: string;
+  isOwner: boolean;
 }
 
 export function EndpointForm({
   endpoint,
   projectId,
   projectSlug,
+  isOwner,
 }: EndpointFormProps) {
   const [method, setMethod] = useState(endpoint.method);
   const [path, setPath] = useState(endpoint.path);
@@ -50,6 +57,8 @@ export function EndpointForm({
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const router = useRouter();
   const { addToast } = useToast();
@@ -178,6 +187,12 @@ export function EndpointForm({
     }
   };
 
+  const handleTemplateSelect = (template: ResponseTemplate) => {
+    setBody(JSON.stringify(template.body, null, 2));
+    setStatusCode(template.statusCode);
+    addToast({ type: "success", title: `Template "${template.name}" applied!` });
+  };
+
   const handleFormat = () => {
     if (isValidJson(body)) {
       setBody(formatJson(body));
@@ -240,13 +255,20 @@ export function EndpointForm({
       {/* JSON Editor */}
       <div>
         <div className="mb-1.5 flex items-center justify-between">
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <button
               onClick={() => setShowAiModal(true)}
               className="flex items-center gap-1.5 text-xs text-[#F59E0B] transition-colors hover:text-[#EAB308]"
             >
               <Wand2 className="h-3 w-3" />
               Generate with AI
+            </button>
+            <button
+              onClick={() => setShowTemplates(true)}
+              className="flex items-center gap-1.5 text-xs text-[#6366F1] transition-colors hover:text-[#4F46E5]"
+            >
+              <Layers className="h-3 w-3" />
+              Templates
             </button>
           </div>
           <button
@@ -290,11 +312,29 @@ export function EndpointForm({
       {/* Tester */}
       <EndpointTester url={mockUrl} method={method} />
 
+      {/* Recent Hits */}
+      <RecentHitsPanel projectId={projectId} endpointId={endpoint.id} />
+
+      {/* API Key Protection */}
+      <ApiKeyPanel
+        projectId={projectId}
+        endpointId={endpoint.id}
+        apiKeyRequired={endpoint.apiKeyRequired}
+        isOwner={isOwner}
+      />
+
+      {/* Templates Modal */}
+      <TemplatesModal
+        isOpen={showTemplates}
+        onClose={() => setShowTemplates(false)}
+        onSelect={handleTemplateSelect}
+      />
+
       {/* AI Modal */}
       <Modal isOpen={showAiModal} onClose={() => setShowAiModal(false)} title="Generate Mock Data with AI">
         <div className="space-y-4">
           <p className="text-sm text-[#9C9789]">
-            Describe the JSON structure you need. For example: "A list of 3 users with id, name, and email".
+            Describe the JSON structure you need. For example: &quot;A list of 3 users with id, name, and email&quot;.
           </p>
           <Input
             value={aiPrompt}
